@@ -1,0 +1,31 @@
+#just for testing
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: testjob
+  namespace: panoptes
+spec:
+  template:
+    spec:
+      imagePullSecrets:
+      - name: panoptes-registry-credentials
+      containers:
+      - name: model-training
+        image: registry.docker.nat.bt.com/panoptes/callcenter-model-training:latest
+        env:
+        - name: FEAST_S3_ENDPOINT_URL
+          value: http://minio-service.kubeflow.svc.cluster.local:9000
+        - name: AWS_ACCESS_KEY_ID
+          value: minio
+        - name: AWS_SECRET_ACCESS_KEY
+          value: minio123
+        - name: startDate
+          value: "2022-11-03 15:18:47.374516Z"
+        - name: endDate
+          value: "2022-11-03 16:18:47.374516Z"
+        - name: deploymentName
+          value: callcenter
+        - name: ioNames
+          value: "wait_duration,service_duration,is_happy"
+      restartPolicy: Never
+  backoffLimit: 2
